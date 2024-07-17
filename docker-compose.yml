@@ -56,7 +56,7 @@ services:
 
   user-preferences-service:
     build:
-      context: ./UserPreferencesService
+      context: ./user-preferences-service
       dockerfile: Dockerfile
     image: userpreferencesservice
     ports:
@@ -92,7 +92,7 @@ services:
 
   news-aggregation-service:
     build:
-      context: ./NewsAggregationService
+      context: ./news-aggregation-service
       dockerfile: Dockerfile
     image: newsaggregationservice
     ports:
@@ -129,7 +129,7 @@ services:
 
   communication-service:
     build:
-      context: ./CommunicationService
+      context: ./communication-service
       dockerfile: Dockerfile
     image: communicationservice
     ports:
