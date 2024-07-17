@@ -1,0 +1,43 @@
+{
+  "properties": [
+    {
+      "name": "newsDataIo.api.url",
+      "type": "java.lang.String",
+      "description": "url & apikey for the service use."
+    },
+    {
+      "name": "spring.redis.dapr.component-name",
+      "type": "java.lang.String",
+      "description": "Description for spring.redis.dapr.component-name."
+    },
+    {
+      "name": "dapr.enable",
+      "type": "java.lang.String",
+      "description": "Description for dapr.enable."
+    },
+    {
+      "name": "dapr.app-id",
+      "type": "java.lang.String",
+      "description": "Description for dapr.app-id."
+    },
+    {
+      "name": "dapr.http-port",
+      "type": "java.lang.String",
+      "description": "Description for dapr.http-port."
+    },
+    {
+      "name": "dapr.grpc-port",
+      "type": "java.lang.String",
+      "description": "Description for dapr.grpc-port."
+    },
+    {
+      "name": "dapr.placement-address",
+      "type": "java.lang.String",
+      "description": "Description for dapr.placement-address."
+    },
+    {
+      "name": "dapr.app-port",
+      "type": "java.lang.String",
+      "description": "Description for dapr.app-port."
+    }
+  ] }
