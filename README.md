@@ -5,7 +5,8 @@ The Personalized News Update Aggregator is a microservices-based application des
 <p><strong>Features</strong></p>
 <ul>
   <li><strong>Microservices Architecture:</strong> Built using microservices to separate concerns and enable scalability and maintainability.</li>
-  <li><strong>Message Queuing with RabbitMQ & communication with Dapr:</strong> Uses RabbitMQ as a message broker for asynchronous communication between services.</li>
+  <li><strong>Message Queuing with RabbitMQ</strong> Uses RabbitMQ as a message broker for asynchronous communication between services.</li>
+  <li><strong>Communication with Dapr:</strong> Utilizes Dapr for service-to-service invocation, pub/sub messaging, and state management.</li>
   <li><strong>API Integration:</strong> Integrates with the Newsdata.io API to fetch the latest news articles based on user preferences.</li>
   <li><strong>Email Notification:</strong> Sends personalized news updates to users via email using RabbitMQ and Gemini AI.</li>
   <li><strong>Docker and Docker Compose:</strong> Containerized application with Docker Compose for orchestrating multiple services.</li>
