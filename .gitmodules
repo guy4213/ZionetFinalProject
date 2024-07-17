@@ -1,0 +1,9 @@
+[submodule "NewsAggregationService"]
+	path = NewsAggregationService
+	url = ./NewsAggregationService
+[submodule "CommunicationService"]
+	path = CommunicationService
+	url = ./CommunicationService
+[submodule "UserPreferencesService"]
+	path = UserPreferencesService
+	url = ./UserPreferencesService

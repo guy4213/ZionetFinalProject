@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="VcsDirectoryMappings">
+    <mapping directory="$PROJECT_DIR$/.." vcs="Git" />
+    <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/CommunicationService" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/NewsAggregationService" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/NewsAggregationService/ZionetFinalProject" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/UserPreferencesService" vcs="Git" />
+  </component>
+</project>

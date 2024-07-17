@@ -1,0 +1,270 @@
+{
+	"info": {
+		"_postman_id": "fc65494b-b461-4806-939d-d7bd22de61fd",
+		"name": "FinalProjectZionet",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "29089163",
+		"_collection_link": "https://gold-crescent-323918.postman.co/workspace/finalPro~7d598583-a3bc-48f0-b83e-cfa49ee38296/collection/29089163-fc65494b-b461-4806-939d-d7bd22de61fd?action=share&source=collection_link&creator=29089163"
+	},
+	"item": [
+		{
+			"name": "UserService(Accessor)",
+			"item": [
+				{
+					"name": "getUserByID",
+					"protocolProfileBehavior": {
+						"disabledSystemHeaders": {},
+						"strictSSL": false
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8090/api/v1/users/4",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8090",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "userRegister",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userName\":\"trg\",\r\n    \"email\":\"guy35@gmail.com\",\r\n    \"password\":\"Guy7s@000\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8090/api/v1/users/register?preferencesNames=tech,art,middleEast",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8090",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"register"
+							],
+							"query": [
+								{
+									"key": "preferencesNames",
+									"value": "tech,art,middleEast"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "updatePreferencesToUser",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8090/api/v1/users/updatePreferencesByNames?userId=2&preferencesNames=fun",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8090",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"updatePreferencesByNames"
+							],
+							"query": [
+								{
+									"key": "userId",
+									"value": "2"
+								},
+								{
+									"key": "preferencesNames",
+									"value": "fun"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create New Preference",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"fun\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8090/api/v1/preferences",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8090",
+							"path": [
+								"api",
+								"v1",
+								"preferences"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Preferences",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8090/api/v1/preferences",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8090",
+							"path": [
+								"api",
+								"v1",
+								"preferences"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Preference By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8090/api/v1/preferences/5",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8090",
+							"path": [
+								"api",
+								"v1",
+								"preferences",
+								"5"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Preference By ID",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\":\"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8090/api/v1/preferences/2",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8090",
+							"path": [
+								"api",
+								"v1",
+								"preferences",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "get all users :)",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8090/api/v1/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8090",
+							"path": [
+								"api",
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "News Aggregation Service (fetch news)",
+			"item": [
+				{
+					"name": "fetchnewsbypreferenescByUserID)",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Communication Service",
+			"item": [
+				{
+					"name": "sendEmail to user (communicationService)",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "(reference for all preferences)",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		}
+	]
+}

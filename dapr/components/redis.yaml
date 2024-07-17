@@ -1,0 +1,12 @@
+# nonk8s
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: pubsub-rediss
+  namespace: default
+spec:
+  type: pubsub.redis
+  version: v1
+  metadata:
+    - name: redisHost
+      value: "redis:6379"

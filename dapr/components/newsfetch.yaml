@@ -1,0 +1,28 @@
+# nonk8s
+apiVersion: dapr.io/v1alpha1
+kind: Component
+metadata:
+  name: newsfetch
+spec:
+  type: pubsub.rabbitmq
+  version: v1
+  metadata:
+    - name: host
+      value: "amqp://rabbitmq:5672"
+    - name: durable
+      value: "false"
+    - name: deletedWhenUnused
+      value: "false"
+    - name: autoAck
+      value: "false"
+    - name: reconnectWait
+      value: "0"
+    - name: concurrency
+      value: "1"
+    - name: username
+      value: "guest"
+    - name: password
+      value: "guest"
+  scope:
+    - news-aggregation-service
+    - communication-service

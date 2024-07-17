@@ -1,0 +1,240 @@
+version: '3.8'
+
+services:
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - mynetwork
+
+  mysql-container:
+    image: mysql:8.0
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: UserDb
+    ports:
+      - "3307:3306"
+    networks:
+      - mynetwork
+
+  mysql-container2:
+    image: mysql:8.0
+    container_name: mysql-container2
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: newArticleDb
+    ports:
+      - "3308:3306"
+    networks:
+      - mynetwork
+
+  redis:
+    image: redis:latest
+    container_name: redis-master
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis.conf:/usr/local/etc/redis/redis.conf
+    command: ["redis-server", "/usr/local/etc/redis/redis.conf"]
+    networks:
+      - mynetwork
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    networks:
+      - mynetwork
+
+  user-preferences-service:
+    build:
+      context: ./UserPreferencesService
+      dockerfile: Dockerfile
+    image: userpreferencesservice
+    ports:
+      - "8090:8090"
+    environment:
+      - SERVER_PORT=8090
+      - SPRING_APPLICATION_NAME=UserPreferencesService
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-container:3306/UserDb?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&autoReconnect=true&useSSL=false
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=123456
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL8Dialect
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_SECURITY_USER_NAME=root
+      - SPRING_SECURITY_USER_PASSWORD=123456
+      - SPRINGDOC_SWAGGER_UI_PATH=/swagger
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK=DEBUG
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_CLOUD_OPENFEIGN=DEBUG
+      - SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING=true
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=*
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+      - SPRING_CACHE_TYPE=redis
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+    depends_on:
+      - mysql-container
+      - rabbitmq
+    networks:
+      - mynetwork
+
+  news-aggregation-service:
+    build:
+      context: ./NewsAggregationService
+      dockerfile: Dockerfile
+    image: newsaggregationservice
+    ports:
+      - "8091:8091"
+    environment:
+      - SERVER_PORT=8091
+      - SPRING_APPLICATION_NAME=NewAggregationService
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-container2:3306/newArticleDb?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&autoReconnect=true&useSSL=false
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=123456
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQL8Dialect
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=create-drop
+      - SPRING_JPA_SHOW_SQL=true
+      - SPRING_SECURITY_USER_NAME=root
+      - SPRING_SECURITY_USER_PASSWORD=123456
+      - SPRINGDOC_SWAGGER_UI_PATH=/swagger
+      - NEWSDATAIO_API_URL=https://newsdata.io/api/1/latest?apikey=pub_48221673062e52e23fd7865e998dcd38a83b5&language=en
+      - SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING=true
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK=DEBUG
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=*
+      - LOGGING_LEVEL_ORG_SPRINGFRAMEWORK_CLOUD_OPENFEIGN=DEBUG
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+      - SPRING_CACHE_TYPE=redis
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+    depends_on:
+      - mysql-container2
+      - rabbitmq
+    networks:
+      - mynetwork
+
+  communication-service:
+    build:
+      context: ./CommunicationService
+      dockerfile: Dockerfile
+    image: communicationservice
+    ports:
+      - "8092:8092"
+    environment:
+      - SERVER_PORT=8092
+      - SPRING_APPLICATION_NAME=CommunicationService
+      - SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING=true
+      - SPRING_MAIL_HOST=smtp.gmail.com
+      - SPRING_MAIL_PORT=587
+      - SPRING_MAIL_USERNAME=guy421367@gmail.com
+      - SPRING_MAIL_PASSWORD=bloy heua bnpm zixc
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH=true
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE=true
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_REQUIRED=true
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_TIMEOUT=5000
+      - SPRING_MAIL_PROPERTIES_MAIL_SMTP_WRITETIMEOUT=5000
+      - SPRING_JACKSON_SERIALIZATION_FAIL_ON_EMPTY_BEANS=false
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=*
+      - SPRING_REDIS_HOST=redis
+      - SPRING_REDIS_PORT=6379
+      - SPRING_CACHE_TYPE=redis
+      - RABBITMQ_HOST=rabbitmq
+      - RABBITMQ_PORT=5672
+      - RABBITMQ_USER=guest
+      - RABBITMQ_PASSWORD=guest
+    depends_on:
+      - rabbitmq
+
+    networks:
+      - mynetwork
+
+  user-preferences-service-dapr:
+    image: "daprio/daprd:edge"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 10
+        window: 120s
+    command: ["./daprd",
+              "-app-id", "user-preferences-service",
+              "-app-protocol", "http",
+              "-app-port", "8090",
+              "-dapr-http-port", "3500",
+              "-resources-path", "./dapr/components",
+              "-config", "./dapr/config.yaml",
+
+    ]
+    volumes:
+        - ./dapr:/dapr
+    depends_on:
+      - user-preferences-service
+
+    network_mode: "service:user-preferences-service"
+
+  news-aggregation-service-dapr:
+    image: "daprio/daprd:edge"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 10
+        window: 120s
+    command: ["./daprd",
+              "-app-id", "news-aggregation-service",
+              "-app-protocol", "http",
+              "-app-port", "8091",
+              "-dapr-http-port", "3500",
+              "-resources-path", "./dapr/components",
+              "-config", "./dapr/config.yaml",
+
+    ]
+    volumes:
+      - ./dapr:/dapr
+    depends_on:
+      - news-aggregation-service
+
+    network_mode: "service:news-aggregation-service"
+
+  communication-service-dapr:
+    image: "daprio/daprd:edge"
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 10
+        window: 120s
+    command: ["./daprd",
+              "-app-id", "communication-service",
+              "-app-protocol", "http",
+              "-app-port", "8092",
+              "-dapr-http-port", "3500",
+              "-resources-path", "./dapr/components",
+              "-config", "./dapr/config.yaml",
+
+    ]
+    volumes:
+     - ./dapr:/dapr
+    depends_on:
+      - communication-service
+
+    network_mode: "service:communication-service"
+
+
+networks:
+  mynetwork:
+    driver: bridge
