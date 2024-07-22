@@ -20,7 +20,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8090/api/v1/users/4",
+							"raw": "http://localhost:8090/api/v1/users/{userId}",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -30,7 +30,7 @@
 								"api",
 								"v1",
 								"users",
-								"4"
+								"{userId}"
 							]
 						}
 					},
@@ -51,7 +51,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8090/api/v1/users/register?preferencesNames=tech,art,middleEast",
+							"raw": "http://localhost:8090/api/v1/users/register?preferencesNames=Technology,Entertainment,Domestic",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -162,7 +162,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8090/api/v1/preferences/5",
+							"raw": "http://localhost:8090/api/v1/preferences/{userId}",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -172,7 +172,7 @@
 								"api",
 								"v1",
 								"preferences",
-								"5"
+								"{userId}"
 							]
 						}
 					},
@@ -193,7 +193,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8090/api/v1/preferences/2",
+							"raw": "http://localhost:8090/api/v1/preferences/{userId}",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -203,7 +203,7 @@
 								"api",
 								"v1",
 								"preferences",
-								"2"
+								"{userId}"
 							]
 						}
 					},
@@ -239,8 +239,24 @@
 					"name": "fetchnewsbypreferenescByUserID)",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8091/newsAggregation/dapr/subscribe/userDetails/{userId}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8091",
+							"path": [
+								"newsAggregation",
+								"dapr",
+								"subscribe",
+								"userDetails",
+								"{userId}"
+							]
+						}
 					},
+
 					"response": []
 				}
 			]
@@ -252,19 +268,27 @@
 					"name": "sendEmail to user (communicationService)",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8092/dapr/subscribe/newsNotification/byUserId/{userId}",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8092",
+							"path": [
+								"dapr",
+								"subscribe",
+								"newsNotification",
+								"byUserId",
+								"{userId}"
+							]
+						}
 					},
 					"response": []
 				}
 			]
-		},
-		{
-			"name": "(reference for all preferences)",
-			"request": {
-				"method": "GET",
-				"header": []
-			},
-			"response": []
 		}
+
 	]
 }
