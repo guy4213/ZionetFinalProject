@@ -45,8 +45,8 @@ The Personalized News Update Aggregator is a microservices-based application des
 <p>Users can choose from the following categories when setting their news preferences,for instance:</p>
 <ul>
   <li>Technology</li>
-  <li>Arts</li>
-  <li>Middle East</li>
+ <li>Education</li>
+  <li>Environment</li>
   <li>Finance</li>
   <li>Sports</li>
   <li>Politics</li>
