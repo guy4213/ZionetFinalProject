@@ -27,15 +27,16 @@ The Personalized News Update Aggregator is a microservices-based application des
 <ul>
   <li>POST /users/register: Registers a new user with preferences+ sends the message to a pub sub queue</li>
   <li>GET /users/{userId}/preferences: Retrieves user preferences by userId.</li>
+  <li>PUT users/updatePreferencesByNames?userId={userId}&preferencesNames={Categories}: updates the user`s preferences list by its id, and adds the preferencesNames to the existing preferences list. .</li>
 </ul>
 <p><strong>NewsAggregationService</strong></p>
 <ul>
-  <li>POST /userRegisterDetails: gets the queue message,fetches news,sends forward to CommunicationService.</li>
+  <li>*Inner POST Req by Dapr:  /userRegisterDetails: gets the queue message,fetches news,sends forward to CommunicationService.</li>
      <li>GET /userDetails/{userId}: gets user Details by Id and then fetches new by his preferences,then send it to CommunicationService.</li>
 </ul>
 <p><strong>CommunicationService</strong></p>
 <ul>
-  <li>POST /newsNotificationDetails: gets the queue message,sends the response message(articles&categories of them)to mail`s user using gmail & smtp.</li>
+  <li>*Inner POST Req by Dapr: /newsNotificationDetails: gets the queue message,sends the response message(articles&categories of them)to mail`s user using gmail & smtp.</li>
       <li>GET /newsNotification/byUserId/{userId}: if user is exist, can get its details and activate`s news aggregation fetch news method, gets the articles and sends the response to mail`s user.</li>
 
 </ul>
