@@ -20,7 +20,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8090/api/v1/users/{userId}",
+							"raw": "http://localhost:8090/api/v1/users/4",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -30,7 +30,7 @@
 								"api",
 								"v1",
 								"users",
-								"{userId}"
+								"4"
 							]
 						}
 					},
@@ -43,7 +43,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"userName\":\"trg\",\r\n    \"email\":\"guy421367@gmail.com\",\r\n    \"password\":\"Guy7s@000\"\r\n}",
+							"raw": "{\r\n    \"userName\":\"trg\",\r\n    \"email\":\"guy35@gmail.com\",\r\n    \"password\":\"Guy7s@000\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -51,7 +51,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8090/api/v1/users/register?preferencesNames=Technology,Entertainment,Domestic",
+							"raw": "http://localhost:8090/api/v1/users/register?preferencesNames=tech,art,middleEast",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -162,7 +162,7 @@
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "http://localhost:8090/api/v1/preferences/{userId}",
+							"raw": "http://localhost:8090/api/v1/preferences/5",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -172,7 +172,7 @@
 								"api",
 								"v1",
 								"preferences",
-								"{userId}"
+								"5"
 							]
 						}
 					},
@@ -193,7 +193,7 @@
 							}
 						},
 						"url": {
-							"raw": "http://localhost:8090/api/v1/preferences/{userId}",
+							"raw": "http://localhost:8090/api/v1/preferences/2",
 							"protocol": "http",
 							"host": [
 								"localhost"
@@ -203,7 +203,7 @@
 								"api",
 								"v1",
 								"preferences",
-								"{userId}"
+								"2"
 							]
 						}
 					},
@@ -229,9 +229,36 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "delete user by id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8090/api/v1/users/userId",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8090",
+							"path": [
+								"api",
+								"v1",
+								"users",
+								"2"
+							]
+						}
+					},
+					"response": []
 				}
+				
 			]
+			
 		},
+		
+		
+      
 		{
 			"name": "News Aggregation Service (fetch news)",
 			"item": [
@@ -239,24 +266,8 @@
 					"name": "fetchnewsbypreferenescByUserID)",
 					"request": {
 						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8091/newsAggregation/dapr/subscribe/userDetails/{userId}",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8091",
-							"path": [
-								"newsAggregation",
-								"dapr",
-								"subscribe",
-								"userDetails",
-								"{userId}"
-							]
-						}
+						"header": []
 					},
-
 					"response": []
 				}
 			]
@@ -268,27 +279,19 @@
 					"name": "sendEmail to user (communicationService)",
 					"request": {
 						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:8092/dapr/subscribe/newsNotification/byUserId/{userId}",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "8092",
-							"path": [
-								"dapr",
-								"subscribe",
-								"newsNotification",
-								"byUserId",
-								"{userId}"
-							]
-						}
+						"header": []
 					},
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "(reference for all preferences)",
+			"request": {
+				
+				"header": ["?all preferences=Business,Crime,Domestic,Education,Entertainment,Environment,Food,Health,Lifestyle,Other,Politics,Science,Sports,Technology,Top,Tourism,World"]
+			},
+			"response": []
 		}
-
 	]
 }
