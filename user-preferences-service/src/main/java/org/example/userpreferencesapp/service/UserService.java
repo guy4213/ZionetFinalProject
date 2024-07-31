@@ -8,7 +8,7 @@ import org.springframework.web.server.ResponseStatusException;
 public interface UserService {
 UserResponse registerUser(UserRegistrationRequest request, String[] preferences) throws ResponseStatusException;
      //
-UserResponse UpdatePreferences(long userId, String[] preferences);
+UserResponse updatePreferences(long userId, String[] preferences);
 UserListDto getAll(int pageNo, int pageSize, String sortDir, String... sortBy);
 
 UserResponse getUserById(long id);
