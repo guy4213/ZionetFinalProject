@@ -38,8 +38,11 @@ public class User {
             ,message = "please enter valid email pattern ," +
             "for instance: guy42@gmail.com")
     private String email;
+        
     @NotNull
+    @NotEmpty(message = "Password cannot be empty")
     private String password;
+
 
     @ManyToMany(fetch = FetchType.EAGER)
 
