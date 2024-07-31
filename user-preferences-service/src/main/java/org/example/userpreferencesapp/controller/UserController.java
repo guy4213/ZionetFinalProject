@@ -54,11 +54,11 @@ public class UserController {
     }
 
     @PutMapping("/updatePreferencesByNames")
-    public ResponseEntity<?> UpdatePreferences(
+    public ResponseEntity<?> updatePreferences(
             @RequestParam(value = "userId", required = true) long userId,
             @RequestParam(value = "preferencesNames", required = true) String... preferencesNames) {
         try {
-            UserResponse res = userService.UpdatePreferences(userId, preferencesNames);
+            UserResponse res = userService.updatePreferences(userId, preferencesNames);
             return ResponseEntity.ok(res);
         } catch (IllegalArgumentException e) {
             String errorMessage = e.getMessage();
