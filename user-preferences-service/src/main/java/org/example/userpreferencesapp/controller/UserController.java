@@ -33,7 +33,10 @@ public class UserController {
     @PostMapping("/register")
     public Mono<ResponseEntity<Object>> registerUser(@Valid @RequestBody UserRegistrationRequest request,
                                                      @RequestParam(value = "preferencesNames", required = true) String... preferencesNames) {
-     
+       if (preferencesNames == null || preferencesNames.length == 0) {
+            return Mono.just(ResponseEntity.badRequest().body("preferencesNames cannot be null or empty"));
+       }               
+        
         Map<String, String> metadata = new HashMap<>();
         metadata.put("cloudevent.datacontenttype", "application/*+json");
         return Mono.fromCallable(() -> userService.registerUser(request, preferencesNames))
