@@ -73,18 +73,28 @@ public class UserServiceImpl implements UserService{
 
         return mapUserToUserResponse(saved);
     }
-private  Set<Preference> sortListToSet(String[] preferences){
-    List<Preference> sortedList = Arrays.stream(preferences)
-            .map(preferencesRepository::findPreferenceByNameIgnoreCase)
-            .sorted(Comparator.comparing(Preference::getId))
-            .toList();
-        // Check if any null elements were filtered out
-        if (sortedList.size() < preferences.length) {
-        throw new IllegalArgumentException("One or more preferences not found");
+   private Set<Preference> sortListToSet(String[] preferences) {
+        List<String> missingPreferences = new ArrayList<>();
+        List<Preference> sortedList = Arrays.stream(preferences)
+                .map(preferenceName -> {
+                    Preference preference = preferencesRepository.findPreferenceByNameIgnoreCase(preferenceName);
+                    if (preference == null) {
+                        missingPreferences.add(preferenceName);
+                    }
+                    return preference;
+                })
+                .filter(Objects::nonNull)
+                .sorted(Comparator.comparing(Preference::getId))
+                .collect(Collectors.toList());
+    
+        // Check if any preferences were not found
+        if (!missingPreferences.isEmpty()) {
+            String missingPreferencesString = String.join(", ", missingPreferences);
+            throw new NullPointerException("The following preferences were not found: " + missingPreferencesString);
+        }
+    
+        return new HashSet<>(sortedList);
     }
-    Set<Preference> sortedSet = new HashSet<>(sortedList);
-        return sortedSet;
-}
     @Override
     public UserListDto getAll(int pageNo, int pageSize, String sortDir, String... sortBy) {
         try {
