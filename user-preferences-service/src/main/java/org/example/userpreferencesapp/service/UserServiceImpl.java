@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService{
     }
 
 
-    public UserResponse UpdatePreferences(long userId, String[] preferences) {
+    public UserResponse updatePreferences(long userId, String[] preferences) {
         User userEntity = getUserByIdOrThrow(userId);
        var sortedSet= sortListToSet(preferences);
         userEntity.getPreferences().addAll(sortedSet);
