@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.example.newsaggregationapp.entity.NewsNotification;
 import org.example.newsaggregationapp.entity.User;
 import org.example.newsaggregationapp.service.NewsService;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,29 +27,38 @@ public class NewsDaprController {
     private final NewsService newsService;
 
     private final DaprClient daprClient;
+
+    Logger logger = LoggerFactory.getLogger(NewsDaprController.class);
+    
     @Topic(name = "userRegisterDetails", pubsubName = "pubsub")
     @PostMapping("/userRegisterDetails")
-    public Mono<Object> handleUserRegistration(@RequestBody CloudEvent<User> cloudEvent) {
-        LoggerFactory.getLogger(NewsDaprController.class).debug("entered handleUserRegistration method");
+    public Mono<ResponseEntity<Object>> handleUserRegistration(@RequestBody CloudEvent<User> cloudEvent) {
+       
+        logger.debug("Entered handleUserRegistration method");
+    
         Map<String, String> metadata = new HashMap<>();
         metadata.put("cloudevent.datacontenttype", "application/*+json");
+    
         return Mono.fromCallable(() -> {
                     User user = cloudEvent.getData();
                     return newsService.aggregateNews(user);
                 })
-                .flatMap(notification -> {
-                    if (notification == null) {
-                        return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((NewsNotification) null));
-                    }
-                    return daprClient.publishEvent("newsfetch", "newsDetails", notification,metadata);
-
-                })
+                .flatMap(notification -> daprClient.publishEvent("newsfetch", "newsDetails", notification, metadata)
+                        .thenReturn(ResponseEntity.ok().body((Object) notification)))
                 .onErrorResume(e -> {
-                    LoggerFactory.getLogger(NewsDaprController.class).error("Error processing user registration", e);
-                    return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body((NewsNotification) null));
+                    logger.error("Error processing user registration", e);
+                    ResponseEntity<Object> errorResponse;
+                    if (e instanceof IllegalArgumentException) {
+                        errorResponse = ResponseEntity.badRequest().body(e.getMessage());
+                    } else if (e instanceof IllegalStateException) {
+                        errorResponse = ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+                    } else {
+                        errorResponse = ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                .body("An unexpected error occurred: " + e.getMessage());
+                    }
+                    return Mono.just(errorResponse);
                 });
     }
-
 
 
     @GetMapping(path = "/userDetails/{userId}")
