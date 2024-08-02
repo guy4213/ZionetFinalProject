@@ -33,16 +33,29 @@ public class NewsService {
     public NewsNotification aggregateNews(User user) {
         // Fetch user preferences
         Set<Preference> preferences = user.getPreferences();
-
+    
+        // Check for null or empty preferences
+        if (preferences == null || preferences.isEmpty()) {
+            throw new IllegalArgumentException("User preferences cannot be null or empty.");
+        }
+    
         // Fetch news articles based on preferences
         List<Article> articles = preferences.stream()
                 .flatMap(preference -> fetchArticles(preference.getName()).stream())
                 .collect(Collectors.toList());
-
-        // Publish fetched articles and user details to RabbitMQ
+    
+        // Handle case where no articles are found
+        if (articles.isEmpty()) {
+            throw new IllegalStateException("No articles found for the given preferences.(Api problem)");
+        }
+    
+        // Create NewsNotification object
         NewsNotification newsNotification = new NewsNotification(user, articles);
+    
+        // Return the news notification
         return newsNotification;
     }
+    
 
     private List<Article> fetchArticles(String preference) {
         String url = apiUrl + "&category=" + preference;
