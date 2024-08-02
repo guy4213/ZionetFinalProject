@@ -65,7 +65,7 @@ public class CommunicationDaprController {
 
 
     @GetMapping(path = "/newsNotification/byUserId/{userId}")
-    public ResponseEntity<String> handleNewsAggregation(@PathVariable long userId) {
+    public ResponseEntity<String> handleNewsAggregationByUserId(@PathVariable long userId) {
         try {
             // Invoke the method on the news aggregation service
             NewsNotification newsNotification = daprClient.invokeMethod(
