@@ -29,7 +29,7 @@ public class NewsDaprController {
     private final DaprClient daprClient;
 
     Logger logger = LoggerFactory.getLogger(NewsDaprController.class);
-    
+
     @Topic(name = "userRegisterDetails", pubsubName = "pubsub")
     @PostMapping("/userRegisterDetails")
     public Mono<ResponseEntity<Object>> handleUserRegistration(@RequestBody CloudEvent<User> cloudEvent) {
@@ -61,29 +61,34 @@ public class NewsDaprController {
     }
 
 
-    @GetMapping(path = "/userDetails/{userId}")
-    public NewsNotification getUserDetailsById(@PathVariable long userId) {
-        try {
-            // Assuming UserPreferences service exposes an HTTP GET endpoint like "/users/{id}"
-            User user = daprClient.invokeMethod(
-                    "user-preferences-service",
-                    "api/v1/users/" + userId,
-                    null,
-                    HttpExtension.GET,
-                    User.class
-            ).block(); // Blocks until the request completes (synchronous), or use subscribe() for async
+   @GetMapping(path = "/userDetails/{userId}")
+    public Mono<ResponseEntity<Object>> getUserDetailsById(@PathVariable long userId) {
+        logger.info("Fetching user details for userId: {}", userId);
 
-            System.out.println(user);
-
-            if (user != null) {
-                return newsService.aggregateNews(user);
+        return daprClient.invokeMethod(
+                "user-preferences-service",
+                "api/v1/users/" + userId,
+                null,
+                HttpExtension.GET,
+                User.class
+        ).flatMap(user -> {
+            if (user == null) {
+                logger.warn("User not found for userId: {}", userId);
+                return Mono.just(ResponseEntity.notFound().build());
             }
-            return null;
-        } catch (Exception e) {
-            // Log the error details to the console
-            e.printStackTrace();
-            System.out.println(e.getMessage());
-            return null;
-        }
+            logger.debug("User found: {}", user);
+            return Mono.just(newsService.aggregateNews(user))
+                    .map(newsNotification -> ResponseEntity.ok().body((Object) newsNotification));
+        }).onErrorResume(e -> {
+            logger.error("Error fetching user details for userId: {}", userId, e);
+            if (e instanceof IllegalArgumentException) {
+                return Mono.just(ResponseEntity.badRequest().body("Invalid user preferences: " + e.getMessage()));
+            } else if (e instanceof IllegalStateException) {
+                return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body("No articles found: " + e.getMessage()));
+            } else {
+                return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("An unexpected error occurred: " + e.getMessage()));
+            }
+        });
     }
 }
