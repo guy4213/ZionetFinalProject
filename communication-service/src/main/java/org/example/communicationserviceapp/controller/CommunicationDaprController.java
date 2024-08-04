@@ -35,6 +35,9 @@ public class CommunicationDaprController {
     @PostMapping("/newsNotificationDetails")
     public Mono<ResponseEntity<String>> handleRegisteredNewsNotificationDetails(@RequestBody CloudEvent<NewsNotification> cloudEvent) {
         LoggerFactory.getLogger(CommunicationDaprController.class).debug("entered handleUserRegistration method");
+       //Mono- a stream that emits at most one item- successfully or with an error, async.
+       //Mono.differ()- this method being excecuted only when subscriber subscribes to it.
+       //its useful when you want to create new mono for each subscription.
         return Mono.defer(() -> {
             try {
                 NewsNotification newsNotification = cloudEvent.getData();
@@ -42,7 +45,9 @@ public class CommunicationDaprController {
                     logger.error("Received null news notification");
                     return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST).body("News notification is null"));
                 }
-
+                //Mono.fromCallable-a factory method in Project Reactor that creates a Mono from a Callable task.
+                // It's particularly useful when you want to execute a synchronous,
+                // potentially blocking operation in a reactive context.
                 return Mono.fromCallable(() -> {
                     try {
                         communicationService.sendNewsNotification(newsNotification);
@@ -65,27 +70,37 @@ public class CommunicationDaprController {
 
 
     @GetMapping(path = "/newsNotification/byUserId/{userId}")
-    public ResponseEntity<String> handleNewsAggregationByUserId(@PathVariable long userId) {
-        try {
-            // Invoke the method on the news aggregation service
-            NewsNotification newsNotification = daprClient.invokeMethod(
-                    "news-aggregation-service",
-                    "newsAggregation/dapr/subscribe/userDetails/" + userId,
-                    null,
-                    HttpExtension.GET,
-                    NewsNotification.class  // Type of response expected
-            ).block(); // Blocks until the request completes
-
-            if (newsNotification != null) {
-                communicationService.sendNewsNotification(newsNotification);
-                return ResponseEntity.ok("Email sent successfully : "+newsNotification.getUser().getEmail());
-            } else {
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("News notification is null");
+    public Mono<ResponseEntity<String>> handleNewsAggregationByUserId(@PathVariable long userId) {
+        logger.info("Handling news aggregation for userId: {}", userId);
+    
+        return daprClient.invokeMethod(
+                "news-aggregation-service",
+                "newsAggregation/dapr/subscribe/userDetails/" + userId,
+                null,
+                HttpExtension.GET,
+                NewsNotification.class
+        ).
+        flatMap(newsNotification -> {
+            if (newsNotification == null) {
+                //recieve null notification
+                logger.warn("Received null news notification for userId: {}", userId);
+                return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("News notification is null"));
             }
-        } catch (Exception e) {
-            // Log the exception with detailed information
-            logger.error("Error occurred while handling news aggregation for user ID {}: {}", userId, e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to send email: " + e.getMessage());
-        }
+            return Mono.fromCallable(() -> {
+                communicationService.sendNewsNotification(newsNotification);
+                return ResponseEntity.ok("Email sent successfully: " + newsNotification.getUser().getEmail());
+            });
+        }).onErrorResume(e -> {
+            logger.error("Error occurred while sending  news for user ID {}: {}", userId, e.getMessage(), e);
+            if (e instanceof IllegalArgumentException) {
+                return Mono.just(ResponseEntity.badRequest().body("Invalid request: " + e.getMessage()));
+            } else if (e instanceof IllegalStateException) {
+                return Mono.just(ResponseEntity.status(HttpStatus.NOT_FOUND).body("Resource not found: " + e.getMessage()));
+            } else {
+                return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Failed to process request: " + e.getMessage()));
+            }
+        });
     }
 }
